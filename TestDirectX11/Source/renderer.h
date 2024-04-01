@@ -35,6 +35,7 @@ public:
 
 private:
 
+#if 0
 	ID3D11Device* m_pDevice;						// Direct3Dデバイス
 	ID3D11DeviceContext* m_pImmediateContext;		// Direct3Dデバイスコンテキスト
 	IDXGISwapChain* m_pSwapChain;					// スワップチェイン
@@ -50,6 +51,23 @@ private:
 	ID3D11VertexShader* m_pVertexShader;// 頂点シェーダー
 	ID3D11PixelShader* m_pPixelShader;// ピクセルシェーダー
 	D3D11_VIEWPORT          m_Viewport;
+
+#else
+
+	ID3D11Device* m_pDevice;
+	ID3D11DeviceContext* m_pImmediateContext;
+	IDXGISwapChain* m_pSwapChain;
+	ID3D11Texture2D* m_pDepthStencilTexture;
+	ID3D11RenderTargetView* m_pRenderTargetView;
+	ID3D11DepthStencilView* m_pDepthStencilView;
+	ID3D11Buffer* m_pVertexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
+	ID3D11Buffer* m_pConstantBuffer;
+	ID3D11InputLayout* m_pInputLayout;
+	ID3D11VertexShader* m_pVertexShader;
+	ID3D11PixelShader* m_pPixelShader;
+	D3D11_VIEWPORT          m_Viewport;
+#endif
 };
 
 

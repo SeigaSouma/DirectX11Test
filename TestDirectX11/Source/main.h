@@ -57,8 +57,13 @@ typedef struct
 
 struct VERTEX
 {
+#if 0
 	MyLib::Vector3 pos;
 	MyLib::Color col;
+#else
+	float pos[3];
+	float nor[3];
+#endif
 };
 
 //==========================================================================

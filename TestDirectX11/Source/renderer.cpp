@@ -26,6 +26,7 @@ CRenderer::~CRenderer()
 
 }
 
+#if 0
 VERTEX g_VertexList[]{
 		{ { -0.5f,  0.5f, 0.5f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
 		{ {  0.5f, -0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
@@ -38,9 +39,67 @@ WORD g_IndexList[]{
 		0, 3, 1,
 };
 
+#else
+
+VERTEX g_VertexList[]{
+	{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
+	{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
+	{ { -0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
+	{ {  0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
+
+	{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
+	{ { -0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
+	{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
+	{ {  0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
+
+	{ { -0.5f,  0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f } },
+	{ { -0.5f,  0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f } },
+	{ { -0.5f, -0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f } },
+	{ { -0.5f, -0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f } },
+
+	{ {  0.5f,  0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f } },
+	{ {  0.5f, -0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f } },
+	{ {  0.5f,  0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f } },
+	{ {  0.5f, -0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f } },
+
+	{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f } },
+	{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f } },
+	{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f } },
+	{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f } },
+
+	{ { -0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f } },
+	{ { -0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f } },
+	{ {  0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f } },
+	{ {  0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f } },
+};
+
+WORD g_IndexList[]{
+	 0,  1,  2,     3,  2,  1,
+	 4,  5,  6,     7,  6,  5,
+	 8,  9, 10,    11, 10,  9,
+	12, 13, 14,    15, 14, 13,
+	16, 17, 18,    19, 18, 17,
+	20, 21, 22,    23, 22, 21,
+};
+
+
+struct ConstantBuffer {
+	XMFLOAT4X4 world;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 projection;
+	XMFLOAT4   light;
+};
+
+#endif
+
+//D3D11_INPUT_ELEMENT_DESC g_VertexDesc[]{
+//	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//	{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+//};
+
 D3D11_INPUT_ELEMENT_DESC g_VertexDesc[]{
-	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
 HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
@@ -152,7 +211,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 
 
 
-
+#if 0
 	// 頂点バッファ作成
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.ByteWidth = sizeof(VERTEX) * 4;
@@ -167,6 +226,9 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	subResourceData.SysMemPitch = 0;
 	subResourceData.SysMemSlicePitch = 0;
 
+	hr = m_pDevice->CreateBuffer(&bufferDesc, &subResourceData, &m_pVertexBuffer);
+	if (FAILED(hr))
+		return hr;
 
 
 	// インデックスバッファ作成
@@ -186,15 +248,83 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	hr = m_pDevice->CreateBuffer(&ibDesc, &irData, &m_pIndexBuffer);
 	if (FAILED(hr))
 		return hr;
+#else
+
+	// 頂点バッファ作成
+	D3D11_BUFFER_DESC vbDesc;
+	vbDesc.ByteWidth = sizeof(VERTEX) * 24;
+	vbDesc.Usage = D3D11_USAGE_DEFAULT;
+	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbDesc.CPUAccessFlags = 0;
+	vbDesc.MiscFlags = 0;
+	vbDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA vrData;
+	vrData.pSysMem = g_VertexList;
+	vrData.SysMemPitch = 0;
+	vrData.SysMemSlicePitch = 0;
+
+	hr = m_pDevice->CreateBuffer(&vbDesc, &vrData, &m_pVertexBuffer);
+	if (FAILED(hr)) return hr;
+
+
+	// インデックスバッファ作成
+	D3D11_BUFFER_DESC ibDesc;
+	ibDesc.ByteWidth = sizeof(WORD) * 6 * 6;
+	ibDesc.Usage = D3D11_USAGE_DEFAULT;
+	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibDesc.CPUAccessFlags = 0;
+	ibDesc.MiscFlags = 0;
+	ibDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA irData;
+	irData.pSysMem = g_IndexList;
+	irData.SysMemPitch = 0;
+	irData.SysMemSlicePitch = 0;
+
+	hr = m_pDevice->CreateBuffer(&ibDesc, &irData, &m_pIndexBuffer);
+	if (FAILED(hr)) return hr;
+
+
+	// 定数バッファ作成
+	D3D11_BUFFER_DESC cbDesc;
+	cbDesc.ByteWidth = sizeof(ConstantBuffer);
+	cbDesc.Usage = D3D11_USAGE_DEFAULT;
+	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbDesc.CPUAccessFlags = 0;
+	cbDesc.MiscFlags = 0;
+	cbDesc.StructureByteStride = 0;
+
+	hr = m_pDevice->CreateBuffer(&cbDesc, NULL, &m_pConstantBuffer);
+	if (FAILED(hr)) return hr;
 
 
 
+	//// 定数バッファへ視点情報セット
+	//XMMATRIX worldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
-	hr = m_pDevice->CreateBuffer(&bufferDesc, &subResourceData, &m_pVertexBuffer);
-	if (FAILED(hr))
-		return hr;
+	//XMVECTOR eye = XMVectorSet(2.0f, 2.0f, -2.0f, 0.0f);
+	//XMVECTOR focus = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	//XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	//XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, focus, up);
 
+	//float    fov = XMConvertToRadians(45.0f);
+	//float    aspect = m_Viewport.Width / m_Viewport.Height;
+	//float    nearZ = 0.1f;
+	//float    farZ = 100.0f;
+	//XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(fov, aspect, nearZ, farZ);
 
+	//// ライト情報
+	////XMVECTOR light = XMVector3Normalize(XMVectorSet(0.0f, 0.5f, -1.0f, 0.0f));
+
+	//ConstantBuffer cb;
+	//XMStoreFloat4x4(&cb.world, XMMatrixTranspose(worldMatrix));
+	//XMStoreFloat4x4(&cb.view, XMMatrixTranspose(viewMatrix));
+	//XMStoreFloat4x4(&cb.projection, XMMatrixTranspose(projMatrix));
+	////XMStoreFloat4(&cb.light, light);
+	//m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+
+#endif
 
 
 	// 頂点レイアウト作成
@@ -296,16 +426,13 @@ void CRenderer::Draw()
 	m_pSwapChain->Present(0, 0);*/
 
 
-
+#if 0
 	UINT strides = sizeof(VERTEX);
 	UINT offsets = 0;
-	m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &strides, &offsets);
-	m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 
 	m_pImmediateContext->IASetInputLayout(m_pInputLayout);
 	m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &strides, &offsets);
+	m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
 	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
@@ -313,13 +440,59 @@ void CRenderer::Draw()
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
 	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
-	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-
+	// インデックスで描画
 	m_pImmediateContext->DrawIndexed(6, 0, 0);
 
+#else
 
+	// 定数バッファへ視点情報セット
+	XMMATRIX worldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+
+	XMVECTOR eye = XMVectorSet(2.0f, 2.0f, -2.0f, 0.0f);
+	XMVECTOR focus = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, focus, up);
+
+	float    fov = XMConvertToRadians(45.0f);
+	float    aspect = m_Viewport.Width / m_Viewport.Height;
+	float    nearZ = 0.1f;
+	float    farZ = 100.0f;
+	XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(fov, aspect, nearZ, farZ);
+
+	// ライト情報
+	XMVECTOR light = XMVector3Normalize(XMVectorSet(0.0f, 0.5f, -1.0f, 0.0f));
+
+	ConstantBuffer cb;
+	XMStoreFloat4x4(&cb.world, XMMatrixTranspose(worldMatrix));
+	XMStoreFloat4x4(&cb.view, XMMatrixTranspose(viewMatrix));
+	XMStoreFloat4x4(&cb.projection, XMMatrixTranspose(projMatrix));
+	XMStoreFloat4(&cb.light, light);
+	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+
+
+
+
+	UINT strides = sizeof(VERTEX);
+	UINT offsets = 0;
+	m_pImmediateContext->IASetInputLayout(m_pInputLayout);
+	m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &strides, &offsets);
+	m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+	m_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
+	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
+	m_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
+	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
+	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	// インデックスで描画
+	m_pImmediateContext->DrawIndexed(36, 0, 0);
+
+#endif
 
 
 
