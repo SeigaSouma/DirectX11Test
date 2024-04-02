@@ -10,6 +10,7 @@
 #include "calculation.h"
 #include "light.h"
 #include "fog.h"
+#include "input.h"
 
 //==========================================================================
 // 定数定義
@@ -36,10 +37,8 @@ CManager *CManager::m_pManager = nullptr;					// マネージャのオブジェクト
 CManager::CManager()
 {
 	m_pRenderer = nullptr;			// レンダラー
-	m_pInputKeyboard = nullptr;		// キーボード
-	m_pInputGamepad = nullptr;		// ゲームパッド
 	m_pSound = nullptr;				// サウンド
-	m_pInputMouse = nullptr;		// マウス
+	m_pInput = nullptr;				// 入力
 	m_pDebugProc = nullptr;			// デバッグ表示
 	m_pLight = nullptr;				// ライト
 	m_pCamera = nullptr;			// カメラ
@@ -120,6 +119,13 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	m_bHitStop = false;		// ヒットストップの判定
 	m_nCntHitStop = 0;		// ヒットストップのカウンター
 	m_nNumPlayer = 0;		// プレイヤーの数
+
+
+	//**********************************
+	// 入力
+	//**********************************
+	// 生成
+	m_pInput = CInput::Create(hInstance, hWnd);
 
 
 	//**********************************
@@ -407,41 +413,12 @@ void CManager::Uninit()
 	// BGMストップ
 	m_pSound->StopSound();
 
-	//// キーボードの破棄
-	//if (m_pInputKeyboard != nullptr)
-	//{// メモリの確保が出来ていたら
+	if (m_pInput != nullptr) {
+		m_pInput->Uninit();
+		delete m_pInput;
+		m_pInput = nullptr;
+	}
 
-	//	// 終了処理
-	//	m_pInputKeyboard->Uninit();
-
-	//	// メモリの開放
-	//	delete m_pInputKeyboard;
-	//	m_pInputKeyboard = nullptr;
-	//}
-
-	//// ゲームパッドの破棄
-	//if (m_pInputGamepad != nullptr)
-	//{// メモリの確保が出来ていたら
-
-	//	// 終了処理
-	//	m_pInputGamepad->Uninit();
-
-	//	// メモリの開放
-	//	delete m_pInputGamepad;
-	//	m_pInputGamepad = nullptr;
-	//}
-
-	//// マウスの破棄
-	//if (m_pInputMouse != nullptr)
-	//{// メモリの確保が出来ていたら
-
-	//	// 終了処理
-	//	m_pInputMouse->Uninit();
-
-	//	// メモリの開放
-	//	delete m_pInputMouse;
-	//	m_pInputMouse = nullptr;
-	//}
 
 	// レンダラーの破棄
 	if (m_pRenderer != nullptr)
@@ -616,8 +593,7 @@ void CManager::Uninit()
 //==========================================================================
 void CManager::Update()
 {
-	// キーボード情報取得
-	CInputKeyboard *pInputKeyboard = GetInputKeyboard();
+	
 
 	// 過去の時間保存
 	m_OldTime = m_CurrentTime;
@@ -625,6 +601,9 @@ void CManager::Update()
 	// 経過時間
 	m_CurrentTime = timeGetTime();
 	m_fDeltaTime = (float)(m_CurrentTime - m_OldTime) / 1000;
+
+	// 入力機器の更新
+	m_pInput->Update();
 
 	// Imguiの更新
 	//ImguiMgr::Update();
@@ -726,30 +705,6 @@ void CManager::SetEnableHitStop(int nCntHitStop)
 CRenderer *CManager::GetRenderer()
 {
 	return m_pRenderer;
-}
-
-//==========================================================================
-// キーボードの取得
-//==========================================================================
-CInputKeyboard *CManager::GetInputKeyboard()
-{
-	return m_pInputKeyboard;
-}
-
-//==========================================================================
-// ゲームパッドの取得
-//==========================================================================
-CInputGamepad *CManager::GetInputGamepad()
-{
-	return m_pInputGamepad;
-}
-
-//==========================================================================
-// マウスの取得
-//==========================================================================
-CInputMouse *CManager::GetInputMouse()
-{
-	return m_pInputMouse;
 }
 
 //==========================================================================

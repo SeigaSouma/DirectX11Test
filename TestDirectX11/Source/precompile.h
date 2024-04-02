@@ -14,6 +14,9 @@
 #include <time.h>
 #include <string.h>
 #include <DirectXMath.h>	// ベクトルやFLOAT3など便利な算術ライブラリ
+#include <DirectXTex.h>		// テクスチャのライブラリ
+#include "WICTextureLoader11.h"
+#pragma comment(lib, "DirectXTex.lib")
 using namespace DirectX;
 
 #include <d2d1.h>

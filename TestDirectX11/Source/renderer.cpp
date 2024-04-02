@@ -9,6 +9,10 @@
 #include "manager.h"
 #include "debugproc.h"
 #include "fog.h"
+#include "input.h"
+#include "input_mouse.h"
+#include "WICTextureLoader11.cpp"
+#include "calculation.h"
 
 //==========================================================================
 // コンストラクタ
@@ -42,35 +46,35 @@ WORD g_IndexList[]{
 #else
 
 VERTEX g_VertexList[]{
-	{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
-	{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
-	{ { -0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
-	{ {  0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f } },
+	{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f }, {0.0f, 0.0f} },
+	{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f }, {1.0f, 0.0f} },
+	{ { -0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f }, {0.0f, 1.0f} },
+	{ {  0.5f, -0.5f, -0.5f }, {  0.0f,  0.0f, -1.0f }, {1.0f, 1.0f} },
 
-	{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
-	{ { -0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
-	{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
-	{ {  0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f } },
+	{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f }, {0.0f, 0.0f} },
+	{ { -0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f }, {1.0f, 0.0f} },
+	{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f }, {0.0f, 1.0f} },
+	{ {  0.5f, -0.5f,  0.5f }, {  0.0f,  0.0f,  1.0f }, {1.0f, 1.0f} },
 
-	{ { -0.5f,  0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f } },
-	{ { -0.5f,  0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f } },
-	{ { -0.5f, -0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f } },
-	{ { -0.5f, -0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f } },
+	{ { -0.5f,  0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f }, {0.0f, 0.0f} },
+	{ { -0.5f,  0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f }, {1.0f, 0.0f} },
+	{ { -0.5f, -0.5f,  0.5f }, { -1.0f,  0.0f,  0.0f }, {0.0f, 1.0f} },
+	{ { -0.5f, -0.5f, -0.5f }, { -1.0f,  0.0f,  0.0f }, {1.0f, 1.0f} },
 
-	{ {  0.5f,  0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f } },
-	{ {  0.5f, -0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f } },
-	{ {  0.5f,  0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f } },
-	{ {  0.5f, -0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f } },
+	{ {  0.5f,  0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f }, {0.0f, 0.0f} },
+	{ {  0.5f, -0.5f,  0.5f }, {  1.0f,  0.0f,  0.0f }, {1.0f, 0.0f} },
+	{ {  0.5f,  0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f }, {0.0f, 1.0f} },
+	{ {  0.5f, -0.5f, -0.5f }, {  1.0f,  0.0f,  0.0f }, {1.0f, 1.0f} },
 
-	{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f } },
-	{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f } },
-	{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f } },
-	{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f } },
+	{ { -0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f }, {0.0f, 0.0f} },
+	{ {  0.5f,  0.5f,  0.5f }, {  0.0f,  1.0f,  0.0f }, {1.0f, 0.0f} },
+	{ { -0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f }, {0.0f, 1.0f} },
+	{ {  0.5f,  0.5f, -0.5f }, {  0.0f,  1.0f,  0.0f }, {1.0f, 1.0f} },
 
-	{ { -0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f } },
-	{ { -0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f } },
-	{ {  0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f } },
-	{ {  0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f } },
+	{ { -0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f }, {0.0f, 0.0f} },
+	{ { -0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f }, {1.0f, 0.0f} },
+	{ {  0.5f, -0.5f,  0.5f }, {  0.0f, -1.0f,  0.0f }, {0.0f, 1.0f} },
+	{ {  0.5f, -0.5f, -0.5f }, {  0.0f, -1.0f,  0.0f }, {1.0f, 1.0f} },
 };
 
 WORD g_IndexList[]{
@@ -82,12 +86,22 @@ WORD g_IndexList[]{
 	20, 21, 22,    23, 22, 21,
 };
 
+int SEGMENT = 36;
+
 
 struct ConstantBuffer {
+
+#if 1
 	XMFLOAT4X4 world;
 	XMFLOAT4X4 view;
 	XMFLOAT4X4 projection;
 	XMFLOAT4   light;
+#else
+	DirectX::XMMATRIX world;
+	DirectX::XMMATRIX view;
+	DirectX::XMMATRIX projection;
+	DirectX::XMVECTOR light;
+#endif
 };
 
 #endif
@@ -100,6 +114,37 @@ struct ConstantBuffer {
 D3D11_INPUT_ELEMENT_DESC g_VertexDesc[]{
 	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+
+struct ConstantMatrixBuffer 
+{
+	XMFLOAT4X4 world;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 projection;
+};
+
+struct ConstantLight 
+{
+	XMFLOAT4 pos;				// 座標(x,y,z)
+	XMFLOAT4 diffuse;			// 拡散(r,g,b)
+	XMFLOAT4 specular;			// 反射(r,g,b)
+	XMFLOAT4 attenuate;			// 減衰(a,b,c)
+};
+
+struct ConstantMaterial 
+{
+	XMFLOAT4 ambient;			// 環境(r,g,b)
+	XMFLOAT4 diffuse;			// 拡散(r,g,b)
+	XMFLOAT4 specular;			// 反射(r,g,b,光沢度係数)
+};
+
+struct ConstantLightBuffer 
+{
+	XMFLOAT4         eyePos;	// 視点座標
+	XMFLOAT4         ambient;	// 環境光(r,g,b)
+	ConstantLight    pntLight;	// 点光源
+	ConstantMaterial material;	// 物体の質感
 };
 
 HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
@@ -179,8 +224,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	depthStencilDesc.CPUAccessFlags = 0;                  // CPUアクセス フラグ
 	depthStencilDesc.MiscFlags = 0;                       // ミスフラグ
 
-	ID3D11Texture2D* pDepthStencilBuffer;
-	hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &pDepthStencilBuffer);
+	hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilTexture);
 	if (FAILED(hr))
 	{
 		// エラーハンドリング
@@ -194,17 +238,17 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D; // ビューの次元
 	depthStencilViewDesc.Texture2D.MipSlice = 0;           // ミップ スライス
 
-	hr = m_pDevice->CreateDepthStencilView(pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView);
+	hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilTexture, &depthStencilViewDesc, &m_pDepthStencilView);
 	if (FAILED(hr))
 	{
 		// エラーハンドリング
 		if (pDXGIFactory) pDXGIFactory->Release();
-		if (pDepthStencilBuffer) pDepthStencilBuffer->Release();
+		if (m_pDepthStencilTexture) m_pDepthStencilTexture->Release();
 		return hr;
 	}
 
 	// 深度ステンシルバッファの解放
-	if (pDepthStencilBuffer) pDepthStencilBuffer->Release();
+	if (m_pDepthStencilTexture) m_pDepthStencilTexture->Release();
 
 	// DXGIファクトリーの解放
 	if (pDXGIFactory) pDXGIFactory->Release();
@@ -265,7 +309,16 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	vrData.SysMemSlicePitch = 0;
 
 	hr = m_pDevice->CreateBuffer(&vbDesc, &vrData, &m_pVertexBuffer);
-	if (FAILED(hr)) return hr;
+	if (FAILED(hr))
+		return hr;
+
+	for (int i = 0; i < ARRAYSIZE(g_VertexList); ++i)
+	{
+		g_VertexList[i].pos[0] += 2.0f;
+	}
+
+	// バッファにデータを再度コピーする
+	m_pImmediateContext->UpdateSubresource(m_pVertexBuffer, 0, nullptr, g_VertexList, 0, 0);
 
 
 	// インデックスバッファ作成
@@ -283,7 +336,8 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	irData.SysMemSlicePitch = 0;
 
 	hr = m_pDevice->CreateBuffer(&ibDesc, &irData, &m_pIndexBuffer);
-	if (FAILED(hr)) return hr;
+	if (FAILED(hr))
+		return hr;
 
 
 	// 定数バッファ作成
@@ -299,30 +353,32 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	if (FAILED(hr)) return hr;
 
 
+	cbDesc.ByteWidth = sizeof(ConstantBuffer);
+	cbDesc.Usage = D3D11_USAGE_DEFAULT;
+	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbDesc.CPUAccessFlags = 0;
+	cbDesc.MiscFlags = 0;
+	cbDesc.StructureByteStride = 0;
 
-	//// 定数バッファへ視点情報セット
-	//XMMATRIX worldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+	hr = m_pDevice->CreateBuffer(&cbDesc, NULL, &m_pMatrixBuffer);
+	if (FAILED(hr)) return hr;
 
-	//XMVECTOR eye = XMVectorSet(2.0f, 2.0f, -2.0f, 0.0f);
-	//XMVECTOR focus = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	//XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	//XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, focus, up);
 
-	//float    fov = XMConvertToRadians(45.0f);
-	//float    aspect = m_Viewport.Width / m_Viewport.Height;
-	//float    nearZ = 0.1f;
-	//float    farZ = 100.0f;
-	//XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(fov, aspect, nearZ, farZ);
+	// テクスチャ読み込み
+	const wchar_t* texaaa = L"data/TEXTURE/tutorial.png";
+	hr = CreateWICTextureFromFile(m_pDevice, texaaa, &m_pTexture, &m_pTextureView);
+	if (FAILED(hr))
+		return hr;
 
-	//// ライト情報
-	////XMVECTOR light = XMVector3Normalize(XMVectorSet(0.0f, 0.5f, -1.0f, 0.0f));
-
-	//ConstantBuffer cb;
-	//XMStoreFloat4x4(&cb.world, XMMatrixTranspose(worldMatrix));
-	//XMStoreFloat4x4(&cb.view, XMMatrixTranspose(viewMatrix));
-	//XMStoreFloat4x4(&cb.projection, XMMatrixTranspose(projMatrix));
-	////XMStoreFloat4(&cb.light, light);
-	//m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &cb, 0, 0);
+	D3D11_SAMPLER_DESC smpDesc;
+	::ZeroMemory(&smpDesc, sizeof(D3D11_SAMPLER_DESC));
+	smpDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	smpDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	smpDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	smpDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	hr = m_pDevice->CreateSamplerState(&smpDesc, &m_pSampler);
+	if (FAILED(hr))
+		return hr;
 
 #endif
 
@@ -404,28 +460,6 @@ void CRenderer::Draw()
 	static bool bDisp = true;
 
 
-
-
-	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; //red,green,blue,alpha
-
-	/*UINT strides = sizeof(VERTEX);
-	UINT offsets = 0;
-	m_pImmediateContext->IASetInputLayout(m_pInputLayout);
-	m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &strides, &offsets);
-	m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
-	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
-	m_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-
-	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
-	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_pImmediateContext->Draw(4, 0);
-
-	m_pSwapChain->Present(0, 0);*/
-
-
 #if 0
 	UINT strides = sizeof(VERTEX);
 	UINT offsets = 0;
@@ -450,10 +484,73 @@ void CRenderer::Draw()
 	// 定数バッファへ視点情報セット
 	XMMATRIX worldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
-	XMVECTOR eye = XMVectorSet(2.0f, 2.0f, -2.0f, 0.0f);
-	XMVECTOR focus = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+
+	//------------------------------------------------------------
+	// 初期設定
+	//------------------------------------------------------------
+	static FLOAT fTheta = 0.0f;	// カメラ横方向角度
+	static FLOAT fDelta = -0.25f;	// カメラ縦方向角度
+	static FLOAT fDistance = 5.0f;		// カメラ位置から焦点までの距離
+	static FLOAT MOVE = 0.025f;		// カメラ位置から焦点までの距離
+	static FLOAT fCameraX = 0.0f;	// カメラの位置X座標
+	static FLOAT fCameraY = 0.0f;	// カメラの位置Y座標
+	static FLOAT fCameraZ = 0.0f;	// カメラの位置Z座標
+	static MyLib::Vector3 cameraPos = 0.0f;	// カメラの位置Z座標
+
+	DIMOUSESTATE2 aa;
+
+	//------------------------------------------------------------
+	// キー入力関係
+	//------------------------------------------------------------
+	// マウス取得
+	CInputMouse* pInputMouse = CInputMouse::GetInstance();
+
+	// マウス右クリック
+	if (pInputMouse->GetPress(CInputMouse::BUTTON_LEFT) &&
+		pInputMouse->GetPress(CInputMouse::BUTTON_RIGHT))
+	{// 左右同時押し
+
+		MyLib::Vector3 mouseMove = pInputMouse->GetMouseMove();
+
+		cameraPos.x +=
+			(mouseMove.x * sinf(-XM_PI * 0.5f + fTheta) * MOVE) -
+			(mouseMove.y * cosf(-XM_PI * 0.5f + fTheta) * MOVE);
+
+		cameraPos.z +=
+			(mouseMove.x * cosf(-XM_PI * 0.5f + fTheta) * MOVE) +
+			(mouseMove.y * sinf(-XM_PI * 0.5f + fTheta) * MOVE);
+	}
+	else if (pInputMouse->GetPress(CInputMouse::BUTTON_LEFT))
+	{
+		MyLib::Vector3 mouseMove = pInputMouse->GetMouseMove();
+
+		fTheta += mouseMove.x * 0.025f;
+		fDelta += mouseMove.y * 0.025f;
+	}
+
+#define MIN_ROT		(-XM_PI * 0.49f)	// カメラ固定用
+#define MAX_ROT		(XM_PI * 0.49f)	// カメラ固定用
+
+	// 値の正規化
+	UtilFunc::Transformation::RotNormalize(fTheta);
+	UtilFunc::Transformation::ValueNormalize(fDelta, MAX_ROT, MIN_ROT);
+
+	// マウスホイールで距離調整
+	fDistance += pInputMouse->GetMouseMove().z * (MOVE * 0.3f);
+
+	//カメラ位置決定
+	fCameraX = cameraPos.x + cosf(fDelta) * sinf(fTheta) * -fDistance;
+	fCameraY = cameraPos.y + sinf(fDelta) * -fDistance;
+	fCameraZ = cameraPos.z + cosf(fDelta) * cosf(fTheta) * -fDistance;
+
+
+
+	XMVECTOR eye = XMVectorSet(fCameraX, fCameraY, fCameraZ, 0.0f);	// 視点
+	XMVECTOR focus = XMVectorSet(cameraPos.x, cameraPos.y, cameraPos.z, 0.0f);			// 注視点
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, focus, up);
+
 
 	float    fov = XMConvertToRadians(45.0f);
 	float    aspect = m_Viewport.Width / m_Viewport.Height;
@@ -461,18 +558,35 @@ void CRenderer::Draw()
 	float    farZ = 100.0f;
 	XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(fov, aspect, nearZ, farZ);
 
-	// ライト情報
-	XMVECTOR light = XMVector3Normalize(XMVectorSet(0.0f, 0.5f, -1.0f, 0.0f));
-
-	ConstantBuffer cb;
-	XMStoreFloat4x4(&cb.world, XMMatrixTranspose(worldMatrix));
-	XMStoreFloat4x4(&cb.view, XMMatrixTranspose(viewMatrix));
-	XMStoreFloat4x4(&cb.projection, XMMatrixTranspose(projMatrix));
-	XMStoreFloat4(&cb.light, light);
-	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &cb, 0, 0);
-
+	XMVECTOR lightPosition = XMVectorSet(-9.5f, 9.5f, -1.0f, 0.0f);
+	XMVECTOR lightAmbient = XMVectorSet(0.6f, 0.6f, 0.6f, 0.0f);
+	XMVECTOR lightDiffuse = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	XMVECTOR lightSpecular = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	XMVECTOR lightAttenuate = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR materialAmbient = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	XMVECTOR materialDiffuse = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	XMVECTOR materialSpecular = XMVectorSet(0.5f, 0.5f, 0.5f, 50.0f);
 
 
+	ConstantMatrixBuffer cmb;
+	XMStoreFloat4x4(&cmb.world, XMMatrixTranspose(worldMatrix));
+	XMStoreFloat4x4(&cmb.view, XMMatrixTranspose(viewMatrix));
+	XMStoreFloat4x4(&cmb.projection, XMMatrixTranspose(projMatrix));
+	ConstantLightBuffer clb;
+	XMStoreFloat4(&clb.eyePos, eye);
+	XMStoreFloat4(&clb.ambient, lightAmbient);
+	XMStoreFloat4(&clb.pntLight.pos, lightPosition);
+	XMStoreFloat4(&clb.pntLight.diffuse, lightDiffuse);
+	XMStoreFloat4(&clb.pntLight.specular, lightSpecular);
+	XMStoreFloat4(&clb.pntLight.attenuate, lightAttenuate);
+	XMStoreFloat4(&clb.material.ambient, materialAmbient);
+	XMStoreFloat4(&clb.material.diffuse, materialDiffuse);
+	XMStoreFloat4(&clb.material.specular, materialSpecular);
+	m_pImmediateContext->UpdateSubresource(m_pMatrixBuffer, 0, NULL, &cmb, 0, 0);
+	m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &clb, 0, 0);
+
+
+	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; //red,green,blue,alpha
 
 	UINT strides = sizeof(VERTEX);
 	UINT offsets = 0;
@@ -480,69 +594,57 @@ void CRenderer::Draw()
 	m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &strides, &offsets);
 	m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pMatrixBuffer);
 	m_pImmediateContext->VSSetShader(m_pVertexShader, NULL, 0);
 	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
+	m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);
 	m_pImmediateContext->PSSetShader(m_pPixelShader, NULL, 0);
+	m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTextureView);
+	m_pImmediateContext->PSSetSamplers(0, 1, &m_pSampler);
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
 	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
 	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	// インデックスで描画
 	m_pImmediateContext->DrawIndexed(36, 0, 0);
 
+	////------------------------------------------------------------
+	//// 文字操作
+	////------------------------------------------------------------
+	////カメラ角度表示用
+	//WCHAR wcText2[256] = { 0 };
+	//swprintf(wcText2, 256, L"fTheta=%f, fDelta=%f", fTheta, fDelta);
+
+	////カメラ位置表示用
+	//WCHAR wcText3[256] = { 0 };
+	//swprintf(wcText3, 256, L"fCameraX=%f, fCameraY=%f, fCameraZ=%f", fCameraX, fCameraY, fCameraZ);
+
+	////------------------------------------------------------------
+	//// 2D描画
+	////------------------------------------------------------------
+	//m_pImmediateContext->BeginDraw();
+	//m_pImmediateContext->DrawText(wcText1, ARRAYSIZE(wcText1) - 1, m_DWriteTextFormat.Get(), D2D1::RectF(0, 0, 800, 20), m_D2DSolidBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);//m_DWriteTextFormatではなくm_DWriteTextFormat.Get()
+	//m_pImmediateContext->DrawText(wcText2, ARRAYSIZE(wcText2) - 1, m_DWriteTextFormat.Get(), D2D1::RectF(0, 20, 800, 40), m_D2DSolidBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);//m_DWriteTextFormatではなくm_DWriteTextFormat.Get()
+	//m_pImmediateContext->DrawText(wcText3, ARRAYSIZE(wcText3) - 1, m_DWriteTextFormat.Get(), D2D1::RectF(0, 40, 800, 60), m_D2DSolidBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);//m_DWriteTextFormatではなくm_DWriteTextFormat.Get()
+	//m_pImmediateContext->EndDraw();
+
 #endif
-
-
-
-	//m_pSwapChain->Present(0, 0);
 
 	if (CManager::GetInstance()->IsLoadComplete())
 	{
 		// 全ての描画
 		CObject::DrawAll();
 
-		// カメラの設定
-		//CManager::GetInstance()->GetCamera()->SetCamera();
-
 		// デバッグ表示の描画処理
 		CManager::GetInstance()->GetDebugProc()->Draw();
 
 		// テキストの設定
 		CDebugProc::SetText();
-
-		//// ポーズ描画処理
-		//if (bDisp)
-		//{
-		//	CManager::GetInstance()->GetPause()->Draw();
-		//}
-
-		//// 黒フレーム
-		//CManager::GetInstance()->GetBlackFrame()->Draw();
 	}
 	else
 		// ロードマネージャの更新
 	{
 		//GetLoadManager()->Draw();
 	}
-
-	//// 遷移なしフェード描画処理
-	//CInstantFade* pfalsefade = CManager::GetInstance()->GetInstantFade();
-	//if (pfalsefade != nullptr)
-	//{
-	//	pfalsefade->Draw();
-	//}
-
-	//// フェード描画処理
-	//CFade* pfade = CManager::GetInstance()->GetFade();
-	//if (pfade != nullptr)
-	//{
-	//	pfade->Draw();
-	//}
-
-	// ビューポートを元に戻す
-	//m_pImmediateContext->RSSetViewports(numViewports, &viewportDef);
 
 
 	// Imguiの描画

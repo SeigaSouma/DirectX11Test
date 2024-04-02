@@ -63,6 +63,7 @@ struct VERTEX
 #else
 	float pos[3];
 	float nor[3];
+	float tex[2];
 #endif
 };
 

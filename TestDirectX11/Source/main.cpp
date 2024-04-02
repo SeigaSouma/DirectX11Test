@@ -111,7 +111,6 @@ ComPtr<IDXGISwapChain>		m_swapChain;
 // バックバッファーのRTビュー
 ComPtr<ID3D11RenderTargetView> m_backBufferView;
 
-
 //==========================================================================
 // メイン関数
 //==========================================================================
@@ -119,6 +118,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmbLine
 {
 	// メモリリークを出力
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	// WICファイル読込のため、COMを初期化しておく
+	auto result = CoInitializeEx(NULL, COINITBASE_MULTITHREADED);
+	if (FAILED(result)) return 1;
+
+	/*DXApplication dxApp(1280, 720, L"DX Sample");
+	Win32Application::Run(&dxApp, hInstance);*/
 
 	WNDCLASSEX wcex =
 	{

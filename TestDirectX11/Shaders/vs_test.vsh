@@ -2,38 +2,41 @@ struct VS_IN
 {
     float4 pos : POSITION0;
     float4 nor : NORMAL0;
+    float2 tex : TEXCOORD0;
 };
 
 struct VS_OUT
 {
-    float4 pos : SV_POSITION;
-    float4 col : COLOR0;
+    float4 pos  : SV_POSITION;
+    float4 posw : POSITION0;
+    float4 norw : NORMAL0;
+    float2 tex  : TEXCOORD0;
 };
 
 cbuffer ConstantBuffer
 {
-    float4x4 World;         //ワールド変換行列
-    float4x4 View;          //ビュー変換行列
-    float4x4 Projection;    //透視射影変換行列
+    float4x4 world;         // ワールド変換行列
+    float4x4 view;          // ビュー変換行列
+    float4x4 projection;    // 透視射影変換行列
     float4   Light;
 }
 
 VS_OUT vs_main(VS_IN input)
 {
+   
+
     VS_OUT output;
     float3 nor;
     float  col;
 
-    output.pos = mul(input.pos, World);
-    output.pos = mul(output.pos, View);
-    output.pos = mul(output.pos, Projection);
+    output.pos = mul(input.pos, world);
+    output.pos = mul(output.pos, view);
+    output.pos = mul(output.pos, projection);
 
-    nor = mul(input.nor, World).xyz;
-    nor = normalize(nor);
+    output.posw = mul(input.pos, world);
+    output.norw = mul(input.nor, world);
 
-    col = saturate(dot(nor, (float3)Light));
-    col = col * 0.5f + 0.5f;
+    output.tex = input.tex;
 
-    output.col = float4(col, col, col, 1.0f);
     return output;
 }
